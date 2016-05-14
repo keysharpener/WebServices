@@ -1,5 +1,4 @@
-﻿using System;
-using NFluent;
+﻿using NFluent;
 using NUnit.Framework;
 
 namespace WebServices.Tests
@@ -13,7 +12,7 @@ namespace WebServices.Tests
         [TestCase("http://tinyurl.com/gr6q2k2", "The Congregation", "17,50", "EUR")]
         public void Should_return_product_amount_for_random_page(string productUrl, string expectedProductName, string expectedProductPrice, string expectedCurrency)
         {
-            var urlParser = new URLParser();
+            var urlParser = new UrlParser();
             var amazonParser = new AmazonParser(urlParser, productUrl);
             Check.That(amazonParser.GetProductPrice()).Equals(expectedProductPrice);
             Check.That(amazonParser.GetProductCurrency().Equals(expectedCurrency));
