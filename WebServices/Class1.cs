@@ -36,8 +36,9 @@ namespace WebServices
     public class AmazonParser : IUrlParser
     {
         private HtmlDocument _htmlDocument;
-        private string PriceId = "//span[@class='a-size-medium a-color-price offer-price a-text-normal']";
-        private string ProductNameId = "productTitle";
+        private const string bookPriceId = "//span[@class='a-size-medium a-color-price offer-price a-text-normal']";
+        private const string ProductNameId = "productTitle";
+        private const string GenericPriceId = "priceblock_ourprice";
 
         public AmazonParser(URLParser parser, string url)
         {
@@ -49,7 +50,7 @@ namespace WebServices
         {
             var node = _htmlDocument.GetElementbyId(ProductNameId);
             if (node != null)
-                return HtmlEntity.DeEntitize(node.InnerText);
+                return HtmlEntity.DeEntitize(node.InnerText).Trim();
             return null;
         }
 
@@ -60,14 +61,22 @@ namespace WebServices
 
         private string ParsePriceTag(int parameterPosition)
         {
-            var innerText = _htmlDocument.DocumentNode.SelectSingleNode(PriceId).InnerText;
+            string innerText = null;
+            var node = _htmlDocument.GetElementbyId(GenericPriceId);
+            if (node != null)
+                innerText = node.InnerText;
+            else
+            {
+                node = _htmlDocument.DocumentNode.SelectSingleNode(bookPriceId);
+                if (node != null)
+                    innerText = node.InnerText;
+            }
             return HtmlEntity.DeEntitize(innerText.Split(' ')[parameterPosition]);
         }
 
         public string GetProductPicture()
         {
             return string.Empty;
-
         }
 
         public string GetProductCurrency()
